@@ -1,0 +1,45 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+class FlowerGarden
+{
+public:
+    bool blocks(pair<int,int> p1, pair<int,int> p2)
+    {
+        int minp1=min(p1.first,p1.second),maxp1=max(p1.first,p1.second),minp2=min(p2.first,p2.second),maxp2=max(p2.first,p2.second);
+        return !(maxp2<minp1 || minp2>maxp1);
+    }
+    vector<int> getOrdering(vector<int> height, vector<int> bloom, vector<int> wilt)
+    {
+        vector<pair<int,int>> vv(1050);
+        vector<int> ans,temp,index(1050);
+        int n=height.size(),cn,minh,maxh;
+        
+        for(int i=0 ; i<n ; ++i)
+            vv[height[i]]= {bloom[i],wilt[i]},ans.push_back(height[i]);
+        sort(ans.begin(),ans.end(),greater<int>());
+        sort(height.begin(),height.end());
+        for(int i=0 ; i<n ; ++i)
+            index[ans[i]]=i;
+            
+        for(int i=0 ; i<n ; ++i)
+            for(int j=i+1 ; j<n ; ++j)
+            {
+                cn=0;
+                minh=min(height[i],height[j]),maxh=max(height[i],height[j]);
+                if(blocks(vv[height[i]],vv[height[j]]) && index[minh]>index[maxh])
+                {
+                    temp.clear();
+                    for(int z=0 ; z<n ; ++z)
+                    {
+                        if(ans[z]!=maxh)
+                            temp.push_back(ans[z]),index[temp[temp.size()-1]]=cn++;
+                        if(ans[z]==minh)
+                            temp.push_back(maxh),index[temp[temp.size()-1]]=cn++;
+                    }
+                    ans=temp;
+                }
+            }
+        return ans;
+    }
+};
